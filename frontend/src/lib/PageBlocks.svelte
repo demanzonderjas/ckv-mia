@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import DOMPurify from 'dompurify';
 	let { slug } = $props();
 
 	interface ContentBlock {
@@ -50,6 +51,8 @@
 			<p class="block-text">{content.text}</p>
 		{:else if block.type === 'image'}
 			<img class="block-image" src={content.url} alt={content.alt} />
+		{:else if block.type === 'rich'}
+			<div class="block-rich">{@html DOMPurify.sanitize(content.html)}</div>
 		{/if}
 	{/each}
 {/if}
@@ -74,5 +77,14 @@
 	.error {
 		color: red;
 		font-weight: bold;
+	}
+	.block-rich {
+		font-size: 1.15rem;
+		margin-bottom: 1.5rem;
+		color: var(--primary-black);
+		background: #fcfcff;
+		border-radius: 1rem;
+		box-shadow: 0 2px 12px #0001;
+		padding: 1.2rem;
 	}
 </style>

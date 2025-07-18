@@ -38,6 +38,7 @@
 		"@fullcalendar/core": "^6.1.18",
 		"@fullcalendar/daygrid": "^6.1.18",
 		"@fullcalendar/interaction": "^6.1.18",
+		"dompurify": "^3.2.6",
 		"quill": "^2.0.3",
 		"svelte-dnd-action": "^0.9.63",
 		"svelte-quill": "^1.2.0"

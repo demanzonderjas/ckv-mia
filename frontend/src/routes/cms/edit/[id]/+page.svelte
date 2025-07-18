@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { dndzone } from 'svelte-dnd-action';
+	import { browser } from '$app/environment';
 
 	let pageId = Number($page.params.id);
 	let editingPage = $state<any>(null);
@@ -26,11 +27,90 @@
 	let reorderLoading = $state(false);
 	let reorderError = $state('');
 
-	let QuillEditor: any = null;
+	let quill: any = $state(null);
+	let quillContainer: HTMLDivElement | null = $state(null);
+	let quillAdd: any = $state(null);
+	let quillAddContainer: HTMLDivElement | null = $state(null);
+
+	function initQuillEdit(content: string) {
+		if (quillContainer !== null) {
+			import('quill').then(({ default: Quill }) => {
+				if (quill) {
+					quill.off('text-change');
+					quill = null;
+				}
+				// Leeg de container om dubbele toolbars te voorkomen
+				if (quillContainer) quillContainer.innerHTML = '';
+				quill = new Quill(quillContainer as HTMLElement, {
+					theme: 'snow',
+					modules: {
+						toolbar: [
+							['bold', 'italic', 'underline'],
+							[{ list: 'ordered' }, { list: 'bullet' }],
+							['link']
+						]
+					}
+				});
+				// Zet altijd de juiste content na initialisatie
+				quill.root.innerHTML = content || '';
+				quill.on('text-change', () => {
+					editBlockContent = quill.root.innerHTML;
+				});
+			});
+		}
+	}
+
+	// Update Quill content als editBlockContent verandert en quill bestaat
+	$effect(() => {
+		if (quill && typeof editBlockContent === 'string' && quill.root.innerHTML !== editBlockContent) {
+			quill.root.innerHTML = editBlockContent;
+		}
+	});
+
+	function initQuillAdd(content: string) {
+		if (quillAddContainer !== null) {
+			import('quill').then(({ default: Quill }) => {
+				if (quillAdd) {
+					quillAdd.off('text-change');
+					quillAdd = null;
+				}
+				// Leeg de container om dubbele toolbars te voorkomen
+				quillAdd = new Quill(quillAddContainer as HTMLElement, { theme: 'snow' });
+				quillAdd.root.innerHTML = content || '';
+				quillAdd.on('text-change', () => {
+					newBlockContent = quillAdd.root.innerHTML;
+				});
+			});
+		}
+	}
+
+	function stripHtml(html: string): string {
+		const tmp = document.createElement('div');
+		tmp.innerHTML = html;
+		return tmp.textContent || tmp.innerText || '';
+	}
+
+	// Verwijder $effect hooks voor Quill-init
+	// In plaats daarvan:
+	// - Roep initQuillEdit() direct aan in startEditBlock()
+	// - Roep initQuillAdd() direct aan als showAddBlock op true wordt gezet
+
 	onMount(async () => {
-		if (typeof window !== 'undefined') {
-			const mod = await import('svelte-quill');
-			QuillEditor = mod.default;
+		if (browser) {
+			await import('quill/dist/quill.snow.css'); // Quill styles laden
+			const Quill = (await import('quill')).default;
+			if (quillContainer) {
+				quill = new Quill(quillContainer, { theme: 'snow' });
+				quill.on('text-change', () => {
+					editBlockContent = quill.root.innerHTML;
+				});
+			}
+			if (quillAddContainer) {
+				quillAdd = new Quill(quillAddContainer, { theme: 'snow' });
+				quillAdd.on('text-change', () => {
+					newBlockContent = quillAdd.root.innerHTML;
+				});
+			}
 		}
 	});
 
@@ -124,6 +204,8 @@
 		} else {
 			editBlockContent = '';
 		}
+		// Init Quill na render
+		setTimeout(() => initQuillEdit(editBlockContent), 0);
 	}
 
 	function stopEditBlock() {
@@ -236,13 +318,9 @@
 						</label>
 						<label>Title:<br /><input bind:value={editBlockTitle} required /></label>
 						{#if editBlockType === 'text' || editBlockType === 'rich'}
-							<label
-								>{editBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
-								{#if QuillEditor}
-									<svelte:component this={QuillEditor} bind:value={editBlockContent} theme="snow" />
-								{:else}
-									Loading editor...
-								{/if}
+							<label>
+								{editBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
+								<div bind:this={quillContainer}></div>
 							</label>
 						{:else if editBlockType === 'image'}
 							<label>Image URL:<br /><input bind:value={editBlockContent} required /></label>
@@ -251,11 +329,15 @@
 						<button type="button" on:click={stopEditBlock}>Cancel</button>
 						{#if editBlockError}<span class="error">{editBlockError}</span>{/if}
 					</form>
-				{:else if block.type === 'rich'}
-					<div class="rich-content">{@html JSON.parse(block.content).html}</div>
 				{:else}
 					<strong>{block.title || '(no title)'}</strong>
 					<span class="block-type">[{block.type}]</span>
+					<!-- optioneel: preview alleen tonen als gewenst -->
+					<!--
+					{#if block.type === 'rich'}
+						<div class="rich-content">{stripHtml(JSON.parse(block.content).html).slice(0, 100)}{stripHtml(JSON.parse(block.content).html).length > 100 ? '...' : ''}</div>
+					{/if}
+					-->
 					<button class="edit-btn" on:click={() => startEditBlock(block)}>Edit</button>
 					<button
 						class="remove-btn"
@@ -280,13 +362,9 @@
 			</label>
 			<label>Title:<br /><input bind:value={newBlockTitle} required /></label>
 			{#if newBlockType === 'text' || newBlockType === 'rich'}
-				<label
-					>{newBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
-					{#if QuillEditor}
-						<svelte:component this={QuillEditor} bind:value={newBlockContent} theme="snow" />
-					{:else}
-						Loading editor...
-					{/if}
+				<label>
+					{newBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
+					<div bind:this={quillAddContainer}></div>
 				</label>
 			{:else if newBlockType === 'image'}
 				<label>Image URL:<br /><input bind:value={newBlockContent} required /></label>
@@ -424,5 +502,27 @@
 		background: #f9f9f9;
 		border-radius: 0.4rem;
 		font-size: 1rem;
+	}
+	.ql-container {
+		min-height: 180px;
+		background: #fff;
+		border-radius: 0.7rem;
+		box-shadow: 0 2px 8px #0001;
+		padding: 1rem;
+		font-size: 1.08rem;
+		border: 1px solid #e0e0e0;
+	}
+	.ql-toolbar {
+		border-radius: 0.7rem 0.7rem 0 0;
+		background: #f7f7fa;
+		border: 1px solid #e0e0e0;
+		box-shadow: 0 1px 4px #0001;
+		margin-bottom: 0.2rem;
+	}
+	.ql-editor {
+		min-height: 120px;
+		padding: 0.7rem;
+		background: #fcfcff;
+		border-radius: 0.5rem;
 	}
 </style>
