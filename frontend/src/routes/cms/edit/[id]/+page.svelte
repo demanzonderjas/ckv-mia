@@ -3,7 +3,6 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { dndzone } from 'svelte-dnd-action';
-	import QuillEditor from 'svelte-quill';
 
 	let pageId = Number($page.params.id);
 	let editingPage = $state<any>(null);
@@ -26,6 +25,14 @@
 	let editBlockTitle = $state('');
 	let reorderLoading = $state(false);
 	let reorderError = $state('');
+
+	let QuillEditor: any = null;
+	onMount(async () => {
+		if (typeof window !== 'undefined') {
+			const mod = await import('svelte-quill');
+			QuillEditor = mod.default;
+		}
+	});
 
 	async function fetchPageAndBlocks() {
 		if (!pageId) return;
@@ -228,18 +235,17 @@
 							</select>
 						</label>
 						<label>Title:<br /><input bind:value={editBlockTitle} required /></label>
-						{#if editBlockType === 'text'}
+						{#if editBlockType === 'text' || editBlockType === 'rich'}
 							<label
-								>Text:<br /><textarea bind:value={editBlockContent} required rows="3"
-								></textarea></label
-							>
+								>{editBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
+								{#if QuillEditor}
+									<svelte:component this={QuillEditor} bind:value={editBlockContent} theme="snow" />
+								{:else}
+									Loading editor...
+								{/if}
+							</label>
 						{:else if editBlockType === 'image'}
 							<label>Image URL:<br /><input bind:value={editBlockContent} required /></label>
-						{:else if editBlockType === 'rich'}
-							<label
-								>Rich Content:<br />
-								<QuillEditor bind:value={editBlockContent} theme="snow" />
-							</label>
 						{/if}
 						<button type="submit" disabled={editBlockLoading}>Save</button>
 						<button type="button" on:click={stopEditBlock}>Cancel</button>
@@ -273,17 +279,17 @@
 				</select>
 			</label>
 			<label>Title:<br /><input bind:value={newBlockTitle} required /></label>
-			{#if newBlockType === 'text'}
+			{#if newBlockType === 'text' || newBlockType === 'rich'}
 				<label
-					>Text:<br /><textarea bind:value={newBlockContent} required rows="3"></textarea></label
-				>
+					>{newBlockType === 'text' ? 'Text' : 'Rich Content'}:<br />
+					{#if QuillEditor}
+						<svelte:component this={QuillEditor} bind:value={newBlockContent} theme="snow" />
+					{:else}
+						Loading editor...
+					{/if}
+				</label>
 			{:else if newBlockType === 'image'}
 				<label>Image URL:<br /><input bind:value={newBlockContent} required /></label>
-			{:else if newBlockType === 'rich'}
-				<label
-					>Rich Content:<br />
-					<QuillEditor bind:value={newBlockContent} theme="snow" />
-				</label>
 			{/if}
 			<button type="submit" disabled={addBlockLoading}>Add</button>
 			<button type="button" on:click={() => (showAddBlock = false)}>Cancel</button>
