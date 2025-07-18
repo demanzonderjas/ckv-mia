@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('content_blocks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('category'); // 'wedstrijdkorfbal', 'breedtekorfbal', or 'midweek'
-            $table->string('type')->default('senior'); // 'senior' or 'junior'
+            $table->foreignId('page_id')->constrained('pages')->onDelete('cascade');
+            $table->string('type'); // e.g. 'text', 'image', etc.
+            $table->string('title')->nullable();
+            $table->json('content');
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('content_blocks');
     }
 };

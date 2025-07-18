@@ -1,6 +1,5 @@
 <script lang="ts">
 	import SideMenu from '$lib/SideMenu.svelte';
-	let { children } = $props();
 </script>
 
 <div class="content-row">
@@ -17,6 +16,7 @@
 		justify-content: space-between;
 		gap: 2rem;
 		max-width: 1400px;
+		width: 100%;
 		margin: 2.5rem auto 0 auto;
 		padding: 0 1rem;
 		flex: 1 0 auto;

@@ -34,6 +34,7 @@ class MemberController extends Controller
             return [
                 'id' => $member->id,
                 'name' => $name,
+                'gender' => $member->gender,
             ];
         });
         return $result->values();

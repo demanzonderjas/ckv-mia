@@ -11,19 +11,19 @@
 	}
 	interface Member {
 		id: number;
-		first_name: string;
-		last_name: string;
-		email: string;
-		phone: string;
+		name: string;
+		gender: string;
 	}
 
 	let team: Team | null = $state(null);
 	let members: Member[] = $state([]);
 	let loading = $state(true);
 	let error = $state('');
+	let type: string | null = null;
 
 	onMount(async () => {
 		const id = $page.params.id;
+		type = $page.url.searchParams.get('type');
 		try {
 			const res = await fetch(`http://localhost:8000/api/teams/${id}`);
 			if (!res.ok) throw new Error('Team not found');
@@ -52,19 +52,29 @@
 		{/if}
 		<div class="team-picture-placeholder">Teamfoto (placeholder)</div>
 		<h2>Leden</h2>
-		<ul class="member-list">
-			{#each members as member}
-				<li>{member.name}</li>
-			{/each}
-		</ul>
+		<div class="member-groups">
+			<div class="member-group">
+				<h3>{(type ?? team?.type) === 'junior' ? 'Jongens' : 'Mannen'}</h3>
+				<ul class="member-list">
+					{#each members.filter((m) => m.gender === 'male') as member}
+						<li>{member.name}</li>
+					{/each}
+				</ul>
+			</div>
+			<div class="member-group">
+				<h3>{(type ?? team?.type) === 'junior' ? 'Meisjes' : 'Vrouwen'}</h3>
+				<ul class="member-list">
+					{#each members.filter((m) => m.gender === 'female') as member}
+						<li>{member.name}</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
 	</article>
 {/if}
 
 <style>
 	.team-detail {
-		background: var(--primary-white);
-		border-radius: 1rem;
-		box-shadow: 0 2px 12px #0001;
 		padding: 1.5rem 1rem;
 		width: 100%;
 		min-width: 320px;
@@ -111,5 +121,19 @@
 	.error {
 		color: red;
 		font-weight: bold;
+	}
+	.member-groups {
+		display: flex;
+		gap: 2rem;
+		flex-wrap: wrap;
+		margin-top: 1.5rem;
+	}
+	.member-group {
+		flex: 1 1 200px;
+	}
+	.member-group h3 {
+		color: var(--primary-orange);
+		font-size: 1.1rem;
+		margin-bottom: 0.5rem;
 	}
 </style>

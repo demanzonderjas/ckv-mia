@@ -44,9 +44,6 @@
 
 <style>
 	.side-menu {
-		background: var(--primary-white);
-		border-radius: 1rem;
-		box-shadow: 0 2px 12px #0001;
 		padding: 1.5rem 1rem;
 		min-width: 180px;
 		max-width: 300px;

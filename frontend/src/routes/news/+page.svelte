@@ -1,15 +1,46 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	let news = $state([]);
+	import PageBlocks from '$lib/PageBlocks.svelte';
+
+	interface ContentBlock {
+		id: number;
+		type: string;
+		content: any;
+		order: number;
+	}
+	interface PageData {
+		id: number;
+		title: string;
+		description: string;
+		content_blocks: ContentBlock[];
+	}
+	interface NewsItem {
+		id: number;
+		title: string;
+		content: string;
+		image_url?: string;
+		published_at?: string;
+	}
+
+	let pageData: PageData | null = $state(null);
+	let news: NewsItem[] = $state([]);
 	let loading = $state(true);
 	let error = $state('');
 
+	function parseContent(content: any) {
+		if (typeof content === 'string') return JSON.parse(content);
+		return content;
+	}
+
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8000/api/news');
-			if (!res.ok) throw new Error('Failed to fetch news');
-			news = await res.json();
-		} catch (e) {
+			const [pageRes, newsRes] = await Promise.all([
+				fetch('http://localhost:8000/api/pages/slug/news'),
+				fetch('http://localhost:8000/api/news')
+			]);
+			if (pageRes.ok) pageData = await pageRes.json();
+			if (newsRes.ok) news = await newsRes.json();
+		} catch (e: any) {
 			error = e.message;
 		} finally {
 			loading = false;
@@ -17,14 +48,12 @@
 	});
 </script>
 
-<h1>News</h1>
-
+<h1>Nieuws</h1>
+<PageBlocks slug="news" />
 {#if loading}
-	<p>Loading news...</p>
+	<p>Loading...</p>
 {:else if error}
 	<p class="error">{error}</p>
-{:else if news.length === 0}
-	<p>No news articles found.</p>
 {:else}
 	<div class="news-list">
 		{#each news as article}
@@ -45,10 +74,27 @@
 {/if}
 
 <style>
+	.desc {
+		color: #666;
+		margin-bottom: 1.5rem;
+	}
+	.block-text {
+		font-size: 1.15rem;
+		margin-bottom: 1.5rem;
+		color: var(--primary-black);
+	}
+	.block-image {
+		max-width: 100%;
+		display: block;
+		margin: 2rem 0;
+		border-radius: 1rem;
+		box-shadow: 0 2px 12px #0001;
+	}
 	.news-list {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+		margin-top: 2rem;
 	}
 	.news-item {
 		display: flex;

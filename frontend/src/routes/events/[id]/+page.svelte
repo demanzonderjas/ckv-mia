@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import PageContent from '$lib/PageContent.svelte';
 
 	interface Event {
 		id: number;
@@ -47,12 +48,9 @@
 
 <style>
 	.event-detail {
-		background: var(--primary-white);
-		border-radius: 1rem;
-		box-shadow: 0 2px 12px #0001;
-		padding: 2rem 1.5rem;
-		margin-top: 2rem;
-		max-width: 600px;
+		padding: 1.5rem 1rem;
+		width: 100%;
+		min-width: 320px;
 	}
 	.event-detail h1 {
 		color: var(--primary-orange);

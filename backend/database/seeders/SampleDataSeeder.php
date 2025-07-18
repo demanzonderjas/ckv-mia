@@ -8,6 +8,8 @@ use App\Models\Team;
 use App\Models\Event;
 use App\Models\Member;
 use App\Models\SideMenuLink;
+use App\Models\Page;
+use App\Models\ContentBlock;
 
 class SampleDataSeeder extends Seeder
 {
@@ -78,6 +80,16 @@ class SampleDataSeeder extends Seeder
             'category' => 'midweek',
         ]);
 
+        // Create 16 junior teams (J1–J16)
+        for ($i = 1; $i <= 16; $i++) {
+            Team::create([
+                'name' => 'CKV MIA J' . $i,
+                'description' => 'Jeugdteam ' . $i,
+                'category' => 'jeugd',
+                'type' => 'junior',
+            ]);
+        }
+
         // Create Events
         Event::create([
             'name' => 'Training Session',
@@ -120,7 +132,7 @@ class SampleDataSeeder extends Seeder
         $firstNames = ['Anna', 'Bram', 'Clara', 'Daan', 'Eva', 'Finn', 'Gwen', 'Hugo', 'Iris', 'Jens', 'Kim', 'Lars', 'Mila', 'Noah', 'Olaf', 'Pien', 'Quinn', 'Rosa', 'Sven', 'Tess'];
         $lastNames = ['Jansen', 'de Vries', 'Pieters', 'Bakker', 'Visser', 'Smit', 'Meijer', 'Mulder', 'Bos', 'de Boer', 'Vos', 'de Groot', 'van Dijk', 'van Leeuwen', 'de Bruin', 'van der Meer', 'van Dam', 'van Vliet', 'de Lange', 'van den Berg'];
         foreach ($teams as $team) {
-            $numPlayers = rand(8, 10);
+            $numPlayers = $team->type === 'junior' ? rand(7, 10) : rand(8, 10);
             $used = [];
             for ($i = 0; $i < $numPlayers; $i++) {
                 do {
@@ -129,12 +141,14 @@ class SampleDataSeeder extends Seeder
                     $email = strtolower($first . '.' . $last . $team->id . $i . '@example.com');
                 } while (in_array($email, $used));
                 $used[] = $email;
+                $gender = rand(0, 1) ? 'male' : 'female';
                 \App\Models\Member::create([
                     'first_name' => $first,
                     'last_name' => $last,
                     'email' => $email,
                     'phone' => '06' . rand(10000000, 99999999),
                     'team_id' => $team->id,
+                    'gender' => $gender,
                 ]);
             }
         }
@@ -159,6 +173,64 @@ class SampleDataSeeder extends Seeder
             'order' => 3,
             'active' => true,
             'description' => 'Contact details and form.'
+        ]);
+
+        // Seed example pages and content blocks
+        $about = Page::create([
+            'title' => 'Over CKV MIA',
+            'slug' => 'about',
+            'description' => 'Meer over onze club.'
+        ]);
+        $contact = Page::create([
+            'title' => 'Contact',
+            'slug' => 'contact',
+            'description' => 'Contactinformatie van CKV MIA.'
+        ]);
+        $clubInfo = Page::create([
+            'title' => 'Club Info',
+            'slug' => 'club-info',
+            'description' => 'Algemene informatie over CKV MIA.'
+        ]);
+        ContentBlock::create([
+            'page_id' => $about->id,
+            'type' => 'text',
+            'content' => json_encode(['text' => 'CKV MIA is een gezellige korfbalvereniging in Amersfoort.']),
+            'order' => 1
+        ]);
+        ContentBlock::create([
+            'page_id' => $about->id,
+            'type' => 'image',
+            'content' => json_encode(['url' => 'https://www.ckvmia.nl/wp-content/uploads/ckvmia/logo-512.png', 'alt' => 'CKV MIA Logo']),
+            'order' => 2
+        ]);
+        ContentBlock::create([
+            'page_id' => $contact->id,
+            'type' => 'text',
+            'content' => json_encode(['text' => 'Neem contact op via info@ckvmia.nl of bezoek ons op Schothorsterlaan 5, Amersfoort.']),
+            'order' => 1
+        ]);
+        ContentBlock::create([
+            'page_id' => $clubInfo->id,
+            'type' => 'text',
+            'content' => json_encode(['text' => 'CKV MIA biedt sportieve activiteiten voor jong en oud.']),
+            'order' => 1
+        ]);
+        $newsPage = Page::create([
+            'title' => 'Nieuws',
+            'slug' => 'news',
+            'description' => 'Het laatste nieuws van CKV MIA.'
+        ]);
+        ContentBlock::create([
+            'page_id' => $newsPage->id,
+            'type' => 'text',
+            'content' => json_encode(['text' => 'Welkom op de nieuwspagina van CKV MIA! Hier vind je het laatste nieuws, updates en aankondigingen.']),
+            'order' => 1
+        ]);
+        ContentBlock::create([
+            'page_id' => $newsPage->id,
+            'type' => 'image',
+            'content' => json_encode(['url' => 'https://www.ckvmia.nl/wp-content/uploads/ckvmia/logo-512.png', 'alt' => 'Nieuws bij CKV MIA']),
+            'order' => 2
         ]);
     }
 }

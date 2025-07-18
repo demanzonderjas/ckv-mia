@@ -7,11 +7,13 @@
 		name: string;
 		description: string;
 		category: string;
+		type: string;
 	}
 
 	let teams: Team[] = $state([]);
 	let loading = $state(true);
 	let error = $state('');
+	let showType = $state<'senior' | 'junior'>('senior');
 
 	onMount(async () => {
 		try {
@@ -35,24 +37,30 @@
 </script>
 
 <h1>Teams</h1>
+<div class="team-toggle">
+	<button class:active={showType === 'senior'} on:click={() => (showType = 'senior')}
+		>Senioren</button
+	>
+	<button class:active={showType === 'junior'} on:click={() => (showType = 'junior')}>Jeugd</button>
+</div>
 {#if loading}
 	<p>Loading teams...</p>
 {:else if error}
 	<p class="error">{error}</p>
-{:else}
-	{#each Object.entries(groupByCategory(teams)) as [cat, group]}
+{:else if showType === 'senior'}
+	{#each Object.entries(groupByCategory(teams.filter((t) => t.type === 'senior'))) as [cat, group]}
 		{#if group.length}
 			<h2 class="team-category">{cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
 			<ul class="team-list">
 				{#each group as team}
 					<li
 						class="team-item"
-						on:click={() => goto(`/teams/${team.id}`)}
+						on:click={() => goto(`/teams/${team.id}?type=senior`)}
 						tabindex="0"
 						role="button"
 						aria-label={`Bekijk ${team.name}`}
 					>
-						<a class="team-link" href={`/teams/${team.id}`} tabindex="-1"
+						<a class="team-link" href={`/teams/${team.id}?type=senior`} tabindex="-1"
 							><strong>{team.name}</strong></a
 						>
 						{#if team.description}
@@ -63,6 +71,26 @@
 			</ul>
 		{/if}
 	{/each}
+{:else}
+	<h2 class="team-category">Jeugdteams</h2>
+	<ul class="team-list">
+		{#each teams.filter((t) => t.type === 'junior') as team}
+			<li
+				class="team-item"
+				on:click={() => goto(`/teams/${team.id}?type=junior`)}
+				tabindex="0"
+				role="button"
+				aria-label={`Bekijk ${team.name}`}
+			>
+				<a class="team-link" href={`/teams/${team.id}?type=junior`} tabindex="-1"
+					><strong>{team.name}</strong></a
+				>
+				{#if team.description}
+					<span class="desc">{team.description}</span>
+				{/if}
+			</li>
+		{/each}
+	</ul>
 {/if}
 
 <style>
@@ -72,6 +100,30 @@
 		margin-bottom: 1.5rem;
 		color: var(--primary-orange);
 		letter-spacing: -1px;
+	}
+	.team-toggle {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+	.team-toggle button {
+		background: #fff;
+		border: 2px solid var(--primary-orange);
+		color: var(--primary-orange);
+		font-weight: bold;
+		padding: 0.5rem 1.5rem;
+		border-radius: 2rem;
+		font-size: 1.1rem;
+		cursor: pointer;
+		transition:
+			background 0.2s,
+			color 0.2s;
+	}
+	.team-toggle button.active,
+	.team-toggle button:focus {
+		background: var(--primary-orange);
+		color: #fff;
+		outline: none;
 	}
 	.team-category {
 		margin-top: 2rem;
