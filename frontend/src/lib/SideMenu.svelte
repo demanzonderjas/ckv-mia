@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	interface SideMenuLink {
+	interface MenuLink {
 		id: number;
 		title: string;
 		url: string;
@@ -11,15 +11,15 @@
 		category: string;
 	}
 
-	let links: SideMenuLink[] = $state([]);
+	let links: MenuLink[] = $state([]);
 	let loading = $state(true);
 	let error = $state('');
 
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8000/api/side-menu-links?category=side');
+			const res = await fetch('http://localhost:8000/api/menu-links?category=side');
 			if (!res.ok) throw new Error('Failed to fetch menu links');
-			links = (await res.json()).filter((l: SideMenuLink) => l.active);
+			links = (await res.json()).filter((l: MenuLink) => l.active);
 		} catch (e: any) {
 			error = e.message;
 		} finally {

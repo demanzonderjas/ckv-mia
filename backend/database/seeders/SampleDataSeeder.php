@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Team;
 use App\Models\Event;
 use App\Models\Member;
-use App\Models\SideMenuLink;
+use App\Models\MenuLink;
 use App\Models\Page;
 use App\Models\ContentBlock;
 
@@ -168,21 +168,21 @@ class SampleDataSeeder extends Seeder
             }
         }
 
-        SideMenuLink::create([
+        MenuLink::create([
             'title' => 'Playing Schedule',
             'url' => '/schedule',
             'order' => 1,
             'active' => true,
             'description' => 'View the full playing schedule.'
         ]);
-        SideMenuLink::create([
+        MenuLink::create([
             'title' => 'Club Info',
             'url' => '/about',
             'order' => 2,
             'active' => true,
             'description' => 'Learn more about CKV MIA.'
         ]);
-        SideMenuLink::create([
+        MenuLink::create([
             'title' => 'Contact',
             'url' => '/contact',
             'order' => 3,

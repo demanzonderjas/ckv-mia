@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\SideMenuLink;
+use App\Models\MenuLink;
 
-class SideMenuLinkController extends Controller
+class MenuLinkController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return SideMenuLink::where('active', true)->orderBy('order')->get();
+        $query = MenuLink::where('active', true);
+        if ($request->has('category')) {
+            $query->where('category', $request->query('category'));
+        }
+        return $query->orderBy('order')->get();
     }
 
     /**
@@ -28,9 +32,9 @@ class SideMenuLinkController extends Controller
             'active' => 'boolean',
             'description' => 'nullable|string',
             'category' => 'required|string|in:header,side,footer',
-            'parent_id' => 'nullable|exists:side_menu_links,id',
+            'parent_id' => 'nullable|exists:menu_links,id',
         ]);
-        return SideMenuLink::create($validated);
+        return MenuLink::create($validated);
     }
 
     /**
@@ -38,7 +42,7 @@ class SideMenuLinkController extends Controller
      */
     public function show(string $id)
     {
-        return SideMenuLink::findOrFail($id);
+        return MenuLink::findOrFail($id);
     }
 
     /**
@@ -46,7 +50,7 @@ class SideMenuLinkController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $link = SideMenuLink::findOrFail($id);
+        $link = MenuLink::findOrFail($id);
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'url' => 'sometimes|required|string|max:255',
@@ -54,7 +58,7 @@ class SideMenuLinkController extends Controller
             'active' => 'boolean',
             'description' => 'nullable|string',
             'category' => 'sometimes|required|string|in:header,side,footer',
-            'parent_id' => 'nullable|exists:side_menu_links,id',
+            'parent_id' => 'nullable|exists:menu_links,id',
         ]);
         $link->update($validated);
         return $link;
@@ -65,7 +69,7 @@ class SideMenuLinkController extends Controller
      */
     public function destroy(string $id)
     {
-        $link = SideMenuLink::findOrFail($id);
+        $link = MenuLink::findOrFail($id);
         $link->delete();
         return response()->noContent();
     }

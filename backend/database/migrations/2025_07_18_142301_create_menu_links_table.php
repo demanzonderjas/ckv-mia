@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('side_menu_links', function (Blueprint $table) {
+        Schema::create('menu_links', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('url');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('category')->default('side');
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('side_menu_links')->onDelete('set null');
+            $table->foreign('parent_id')->references('id')->on('menu_links')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('side_menu_links');
+        Schema::dropIfExists('menu_links');
     }
 };

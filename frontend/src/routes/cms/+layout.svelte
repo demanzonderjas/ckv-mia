@@ -10,7 +10,7 @@
     <a href="/cms/events">Events</a>
     <a href="/cms/teams">Teams</a>
     <a href="/cms/members">Members</a>
-    <a href="/cms/side-menu-links">Side Menu Links</a>
+    <a href="/cms/menu-links">Menu Links</a>
     <a href="/">← Back to site</a>
   </nav>
   <main>

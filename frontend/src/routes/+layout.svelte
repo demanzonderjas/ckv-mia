@@ -57,13 +57,13 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8000/api/side-menu-links?category=header');
+			const res = await fetch('http://localhost:8000/api/menu-links?category=header');
 			if (res.ok) {
 				headerLinks = (await res.json()).filter((l: any) => l.active);
 			}
 		} catch {}
 		try {
-			const res = await fetch('http://localhost:8000/api/side-menu-links?category=footer');
+			const res = await fetch('http://localhost:8000/api/menu-links?category=footer');
 			if (res.ok) {
 				footerLinks = (await res.json()).filter((l: any) => l.active);
 			}

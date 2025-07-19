@@ -84,6 +84,7 @@ function formatDutchDate(dateStr: string) {
 						{/if}
 					</div>
 					<div class="news-actions">
+						<a class="view-btn" href={`/news/${article.id}`} target="_blank">View</a>
 						<button class="edit-btn" on:click={() => startEdit(article)}>Edit</button>
 						<button class="delete-btn" on:click={() => deleteNews(article.id)} disabled={deletingId === article.id}>
 							{deletingId === article.id ? 'Deleting...' : 'Delete'}
@@ -202,5 +203,22 @@ function formatDutchDate(dateStr: string) {
   font-weight: 500;
   letter-spacing: 0.01em;
   display: inline-block;
+}
+.view-btn {
+  background: #fff;
+  color: var(--primary-orange);
+  border: 2px solid var(--primary-orange);
+  padding: 0.4rem 1.2rem;
+  border-radius: 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.7rem;
+  transition: background 0.2s, color 0.2s;
+}
+.view-btn:hover {
+  background: var(--primary-orange);
+  color: #fff;
 }
 </style> 

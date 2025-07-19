@@ -4,7 +4,7 @@ let { value = $bindable(), category = 'side', excludeId = null, label = 'Parent 
 let options = $state([{ value: '', label: '-- No parent --' }]);
 
 async function fetchOptions() {
-  const res = await fetch(`http://localhost:8000/api/side-menu-links?category=${category}`);
+  const res = await fetch(`http://localhost:8000/api/menu-links?category=${category}`);
   if (res.ok) {
     const links = await res.json();
     options = [{ value: '', label: '-- No parent --' }, ...links.filter((l: any) => !excludeId || l.id != excludeId).map((l: any) => ({ value: l.id, label: l.title }))];

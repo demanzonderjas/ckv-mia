@@ -84,6 +84,7 @@ function formatDutchDate(dateStr: string) {
             <span class="event-location">{event.location}</span>
           </div>
           <div class="event-actions">
+            <a class="view-btn" href={`/events/${event.id}`} target="_blank">View</a>
             <button class="edit-btn" on:click={() => startEdit(event)}>Edit</button>
             <button class="delete-btn" on:click={() => deleteEvent(event.id)} disabled={deletingId === event.id}>
               {deletingId === event.id ? 'Deleting...' : 'Delete'}
@@ -203,5 +204,22 @@ function formatDutchDate(dateStr: string) {
 .error {
   color: red;
   margin-left: 1rem;
+}
+.view-btn {
+  background: #fff;
+  color: var(--primary-orange);
+  border: 2px solid var(--primary-orange);
+  padding: 0.4rem 1.2rem;
+  border-radius: 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.7rem;
+  transition: background 0.2s, color 0.2s;
+}
+.view-btn:hover {
+  background: var(--primary-orange);
+  color: #fff;
 }
 </style> 

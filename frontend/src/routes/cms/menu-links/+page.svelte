@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import { dndzone } from 'svelte-dnd-action';
 
-interface SideMenuLink {
+interface MenuLink {
   id: number;
   title: string;
   url: string;
@@ -14,7 +14,7 @@ interface SideMenuLink {
   parent_id?: number;
 }
 
-let links: SideMenuLink[] = $state([]);
+let links: MenuLink[] = $state([]);
 let loading = $state(true);
 let error = $state('');
 let savingOrder = $state(false);
@@ -25,7 +25,7 @@ const categories = [
   { value: 'footer', label: 'Footer' }
 ];
 
-function getParentTitle(link: SideMenuLink) {
+function getParentTitle(link: MenuLink) {
   const parent = links.find(l => l.id === link.parent_id);
   return parent ? parent.title : '-';
 }
@@ -37,7 +37,7 @@ function linksByCategory(cat: string) {
 async function fetchLinks() {
   loading = true;
   try {
-    const res = await fetch('http://localhost:8000/api/side-menu-links');
+    const res = await fetch('http://localhost:8000/api/menu-links');
     if (!res.ok) throw new Error('Failed to fetch links');
     links = await res.json();
   } catch (e: any) {
@@ -50,17 +50,17 @@ async function fetchLinks() {
 onMount(fetchLinks);
 
 function goToAdd() {
-  goto('/cms/side-menu-links/new');
+  goto('/cms/menu-links/new');
 }
-function startEdit(link: SideMenuLink) {
-  goto(`/cms/side-menu-links/edit/${link.id}`);
+function startEdit(link: MenuLink) {
+  goto(`/cms/menu-links/edit/${link.id}`);
 }
 
 function handleDndConsider({ detail }: any, cat: string) {
   if (!detail?.items) return;
   // Only update local order for this category
   const other = links.filter(l => l.category !== cat);
-  const reordered = detail.items.map((item: SideMenuLink, idx: number) => ({ ...item, order: idx, category: cat }));
+  const reordered = detail.items.map((item: MenuLink, idx: number) => ({ ...item, order: idx, category: cat }));
   links = [...other, ...reordered];
 }
 
@@ -68,17 +68,17 @@ function handleDndFinalize({ detail }: any, cat: string) {
   if (!detail?.items) return;
   // If a link was dropped from another category, update its category
   const other = links.filter(l => l.category !== cat);
-  const reordered = detail.items.map((item: SideMenuLink, idx: number) => ({ ...item, order: idx, category: cat }));
+  const reordered = detail.items.map((item: MenuLink, idx: number) => ({ ...item, order: idx, category: cat }));
   links = [...other, ...reordered];
   saveOrder(reordered);
 }
 
-async function saveOrder(catLinks: SideMenuLink[]) {
+async function saveOrder(catLinks: MenuLink[]) {
   savingOrder = true;
   try {
     await Promise.all(
       catLinks.map(link =>
-        fetch(`http://localhost:8000/api/side-menu-links/${link.id}`, {
+        fetch(`http://localhost:8000/api/menu-links/${link.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({ order: link.order, category: link.category })

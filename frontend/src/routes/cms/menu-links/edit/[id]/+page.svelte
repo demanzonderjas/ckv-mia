@@ -20,7 +20,7 @@ let parentOptions = $state([{ value: '', label: '-- No parent --' }]);
 let selectedCategory = $state('side');
 
 async function fetchParentOptions(category: string) {
-  const res = await fetch(`http://localhost:8000/api/side-menu-links?category=${category}`);
+  const res = await fetch(`http://localhost:8000/api/menu-links?category=${category}`);
   if (res.ok) {
     const links = await res.json();
     parentOptions = [{ value: '', label: '-- No parent --' }, ...links.filter((l: any) => l.id != id).map((l: any) => ({ value: l.id, label: l.title }))];
@@ -47,7 +47,7 @@ async function fetchLink() {
   loading = true;
   error = '';
   try {
-    const res = await fetch(`http://localhost:8000/api/side-menu-links/${id}`);
+    const res = await fetch(`http://localhost:8000/api/menu-links/${id}`);
     if (!res.ok) throw new Error('Failed to fetch link');
     link = await res.json();
   } catch (e: any) {
@@ -65,7 +65,7 @@ async function saveLink(values: any) {
   saveError = '';
   saveSuccess = '';
   try {
-    const res = await fetch(`http://localhost:8000/api/side-menu-links/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/menu-links/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -75,14 +75,14 @@ async function saveLink(values: any) {
     });
     if (!res.ok) throw new Error('Failed to update link');
     saveSuccess = 'Link updated!';
-    setTimeout(() => goto('/cms/side-menu-links'), 800);
+    setTimeout(() => goto('/cms/menu-links'), 800);
   } catch (e: any) {
     saveError = (e as any).message;
   }
 }
 
 function goBack() {
-  goto('/cms/side-menu-links');
+  goto('/cms/menu-links');
 }
 </script>
 

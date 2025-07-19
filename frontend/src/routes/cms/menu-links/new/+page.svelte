@@ -13,7 +13,7 @@ let parentOptions = $state([{ value: '', label: '-- No parent --' }]);
 let selectedCategory = $state('side');
 
 async function fetchParentOptions(category: string) {
-  const res = await fetch(`http://localhost:8000/api/side-menu-links?category=${category}`);
+  const res = await fetch(`http://localhost:8000/api/menu-links?category=${category}`);
   if (res.ok) {
     const links = await res.json();
     parentOptions = [{ value: '', label: '-- No parent --' }, ...links.map((l: any) => ({ value: l.id, label: l.title }))];
@@ -28,7 +28,7 @@ const fields = [
   { name: 'url', label: 'URL', type: 'text', required: true },
   { name: 'category', label: 'Category', type: 'select', required: true, options: categoryOptions, value: selectedCategory },
   { name: 'parent_id', label: 'Parent Link', type: 'parent-link-select', required: false },
-  { name: 'active', label: 'Active', type: 'checkbox', required: false },
+  { name: 'active', label: 'Active', type: 'checkbox', required: false, value: true },
   { name: 'description', label: 'Description', type: 'text', required: false }
 ];
 
@@ -43,7 +43,7 @@ async function addLink(values: any) {
     return;
   }
   try {
-    const res = await fetch('http://localhost:8000/api/side-menu-links', {
+    const res = await fetch('http://localhost:8000/api/menu-links', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,14 +53,14 @@ async function addLink(values: any) {
     });
     if (!res.ok) throw new Error('Failed to add link');
     addSuccess = 'Link added!';
-    setTimeout(() => goto('/cms/side-menu-links'), 800);
+    setTimeout(() => goto('/cms/menu-links'), 800);
   } catch (e: any) {
     addError = (e as any).message;
   }
 }
 
 function goBack() {
-  goto('/cms/side-menu-links');
+  goto('/cms/menu-links');
 }
 </script>
 

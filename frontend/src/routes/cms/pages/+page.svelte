@@ -72,9 +72,10 @@
 				<li class="page-list-item">
 					<div class="page-info">
 						<strong>{page.title}</strong>
-						<span class="slug">({page.slug})</span>
+						<span class="slug">/{page.slug}</span>
 					</div>
 					<div class="page-actions">
+						<a class="view-btn" href={`/${page.slug}`} target="_blank">View</a>
 						<button class="edit-btn" on:click={() => startEdit(page)}>Edit</button>
 						<button class="delete-btn" on:click={() => deletePage(page.id)} disabled={deletingId === page.id}>
 							{deletingId === page.id ? 'Deleting...' : 'Delete'}
@@ -94,7 +95,7 @@
 		border-radius: 1rem;
 		box-shadow: 0 2px 12px #0001;
 		padding: 2rem 1.5rem;
-		max-width: 500px;
+		max-width: 1200px;
 	}
 	.cms-page-list h2 {
 		color: var(--primary-orange);
@@ -140,7 +141,7 @@
 	.page-info {
 		display: flex;
 		align-items: center;
-		gap: 0.7rem;
+		gap: 1.2rem;
 	}
 	.slug {
 		background: #f3f3f3;
@@ -152,6 +153,8 @@
 	.page-actions {
 		display: flex;
 		gap: 0.7rem;
+		align-items: center;
+		justify-content: flex-end;
 	}
 	code {
 		background: #f3f3f3;
@@ -188,5 +191,22 @@
 	}
 	.delete-btn:hover {
 		background: #c0392b;
+	}
+	.view-btn {
+		background: #fff;
+		color: var(--primary-orange);
+		border: 2px solid var(--primary-orange);
+		padding: 0.3rem 0.9rem;
+		border-radius: 1rem;
+		font-weight: 500;
+		font-size: 0.97rem;
+		cursor: pointer;
+		text-decoration: none;
+		margin-right: 0.7rem;
+		transition: background 0.2s, color 0.2s;
+	}
+	.view-btn:hover {
+		background: var(--primary-orange);
+		color: #fff;
 	}
 </style> 

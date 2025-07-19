@@ -94,6 +94,7 @@ function groupByCategory(teams: Team[]) {
                   {/if}
                 </div>
                 <div class="team-actions">
+                  <a class="view-btn" href={`/teams/${team.id}`} target="_blank">View</a>
                   <button class="edit-btn" on:click={() => startEdit(team)}>Edit</button>
                   <button class="delete-btn" on:click={() => deleteTeam(team.id)} disabled={deletingId === team.id}>
                     {deletingId === team.id ? 'Deleting...' : 'Delete'}
@@ -117,6 +118,7 @@ function groupByCategory(teams: Team[]) {
               {/if}
             </div>
             <div class="team-actions">
+              <a class="view-btn" href={`/teams/${team.id}`} target="_blank">View</a>
               <button class="edit-btn" on:click={() => startEdit(team)}>Edit</button>
               <button class="delete-btn" on:click={() => deleteTeam(team.id)} disabled={deletingId === team.id}>
                 {deletingId === team.id ? 'Deleting...' : 'Delete'}
@@ -175,7 +177,7 @@ function groupByCategory(teams: Team[]) {
   border-radius: 1rem;
   box-shadow: 0 2px 12px #0001;
   padding: 2rem 1.5rem;
-  max-width: 900px;
+  max-width: 1200px;
 }
 .team-category {
   margin-top: 2rem;
@@ -232,10 +234,10 @@ function groupByCategory(teams: Team[]) {
   background: var(--primary-orange);
   color: #fff;
   border: none;
-  padding: 0.4rem 1.2rem;
-  border-radius: 1.2rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.97rem;
+  border-radius: 1rem;
   font-weight: 500;
-  font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -247,6 +249,23 @@ function groupByCategory(teams: Team[]) {
 }
 .delete-btn:hover {
   background: #c0392b;
+}
+.view-btn {
+  background: #fff;
+  color: var(--primary-orange);
+  border: 2px solid var(--primary-orange);
+  padding: 0.3rem 0.9rem;
+  font-size: 0.97rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.7rem;
+  transition: background 0.2s, color 0.2s;
+}
+.view-btn:hover {
+  background: var(--primary-orange);
+  color: #fff;
 }
 .error {
   color: red;
