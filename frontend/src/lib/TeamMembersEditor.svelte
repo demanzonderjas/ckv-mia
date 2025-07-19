@@ -28,7 +28,8 @@ async function reloadMembers() {
   try {
     const res = await fetch(`http://localhost:8000/api/cms/members?team_id=${teamId}`);
     if (!res.ok) throw new Error('Failed to fetch members');
-    members = await res.json();
+    const result = await res.json();
+    members = result.data || [];
     status = 'ready';
     dispatch('membersChange', members);
     if (onMembersChange) onMembersChange(members);
