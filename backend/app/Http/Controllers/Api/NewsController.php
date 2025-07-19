@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Models\Upload;
 
 class NewsController extends Controller
 {
@@ -26,6 +27,7 @@ class NewsController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'summary' => 'nullable|string|max:255',
             'content' => 'required|string',
             'image_url' => 'nullable|url',
             'published_at' => 'nullable|date',
@@ -49,6 +51,7 @@ class NewsController extends Controller
         $news = News::findOrFail($id);
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
+            'summary' => 'nullable|string|max:255',
             'content' => 'sometimes|required|string',
             'image_url' => 'nullable|url',
             'published_at' => 'nullable|date',
@@ -71,14 +74,42 @@ class NewsController extends Controller
     {
         $request->validate([
             'image' => 'required|image|max:5120', // max 5MB
+            'entity_type' => 'nullable|string',
+            'entity_id' => 'nullable|integer',
         ]);
         $file = $request->file('image');
         $manager = new ImageManager(new Driver());
         $image = $manager->read($file->getPathname());
         $image->scale(width: 1500); // Resize to max 1500px width
-        $filename = uniqid('news_') . '.' . $file->getClientOriginalExtension();
-        $path = 'news/' . $filename;
+        $filename = uniqid('upload_') . '.' . $file->getClientOriginalExtension();
+        $path = 'uploads/' . $filename;
         Storage::disk('public')->put($path, (string) $image->toJpeg());
-        return response()->json(['path' => '/storage/' . $path]);
+        $upload = new Upload([
+            'path' => '/storage/' . $path,
+            'type' => 'image',
+        ]);
+        if ($request->entity_type && $request->entity_id) {
+            $upload->entity_type = $request->entity_type;
+            $upload->entity_id = $request->entity_id;
+        }
+        $upload->save();
+        return response()->json(['id' => $upload->id, 'path' => $upload->path]);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $request->validate([
+            'path' => 'required|string',
+        ]);
+        $relativePath = ltrim($request->input('path'), '/');
+        $relativePath = preg_replace('#^storage/#', '', $relativePath); // Remove leading 'storage/'
+        $upload = Upload::where('path', $request->input('path'))->first();
+        if (Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
+        }
+        if ($upload) {
+            $upload->delete();
+        }
+        return response()->json(['success' => true]);
     }
 }

@@ -8,6 +8,7 @@
 		order: number;
 		active: boolean;
 		description?: string;
+		category: string;
 	}
 
 	let links: SideMenuLink[] = $state([]);
@@ -16,9 +17,9 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8000/api/side-menu-links');
+			const res = await fetch('http://localhost:8000/api/side-menu-links?category=side');
 			if (!res.ok) throw new Error('Failed to fetch menu links');
-			links = await res.json();
+			links = (await res.json()).filter((l: SideMenuLink) => l.active);
 		} catch (e: any) {
 			error = e.message;
 		} finally {

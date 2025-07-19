@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import PageContent from '$lib/PageContent.svelte';
+	import EditFab from '$lib/EditFab.svelte';
 
 	interface Team {
 		id: number;
@@ -39,6 +40,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{team?.name ? `${team.name} | CKV MIA` : 'CKV MIA'}</title>
+</svelte:head>
+
 {#if loading}
 	<p>Loading team...</p>
 {:else if error}
@@ -70,6 +75,7 @@
 				</ul>
 			</div>
 		</div>
+		<EditFab href={`/cms/teams/edit/${team.id}`} title="Bewerk dit team" />
 	</article>
 {/if}
 

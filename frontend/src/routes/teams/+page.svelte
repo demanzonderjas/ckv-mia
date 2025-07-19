@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import EditFab from '$lib/EditFab.svelte';
+	import { page } from '$app/state';
 
 	interface Team {
 		id: number;
@@ -14,6 +16,7 @@
 	let loading = $state(true);
 	let error = $state('');
 	let showType = $state<'senior' | 'junior'>('senior');
+	let pageTitle = undefined; // Remove $state and fetching for pageTitle
 
 	onMount(async () => {
 		try {
@@ -25,6 +28,7 @@
 		} finally {
 			loading = false;
 		}
+		// Remove pageTitle fetching
 	});
 
 	function groupByCategory(teams: Team[]) {
@@ -35,7 +39,7 @@
 		};
 	}
 </script>
-
+<EditFab href="/cms/teams" title="Beheer teams" />
 <h1>Teams</h1>
 <div class="team-toggle">
 	<button class:active={showType === 'senior'} on:click={() => (showType = 'senior')}

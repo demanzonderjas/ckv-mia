@@ -41,6 +41,25 @@ class MemberController extends Controller
     }
 
     /**
+     * CMS: List all members for a team, full fields, no privacy filtering
+     */
+    public function cmsList(Request $request)
+    {
+        $query = Member::query();
+        if ($request->has('team_id')) {
+            $query->where('team_id', $request->query('team_id'));
+        }
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                  ->orWhere('last_name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%") ;
+            });
+        }
+        return $query->orderBy('last_name')->orderBy('first_name')->paginate(20);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -48,6 +67,7 @@ class MemberController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female',
             'email' => 'required|email|unique:members,email',
             'phone' => 'nullable|string|max:255',
             'team_id' => 'required|exists:teams,id',
@@ -72,6 +92,7 @@ class MemberController extends Controller
         $validated = $request->validate([
             'first_name' => 'sometimes|required|string|max:255',
             'last_name' => 'sometimes|required|string|max:255',
+            'gender' => 'sometimes|required|in:male,female',
             'email' => 'sometimes|required|email|unique:members,email,' . $id,
             'phone' => 'nullable|string|max:255',
             'team_id' => 'sometimes|required|exists:teams,id',

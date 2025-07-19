@@ -1,17 +1,7 @@
 // Field configs for each block type
 export const blockFieldConfigs = {
-  text: [
-    { name: 'type', label: 'Type', type: 'select', required: true, options: [
-      { label: 'Text', value: 'text' },
-      { label: 'Image', value: 'image' },
-      { label: 'Rich', value: 'rich' },
-    ]},
-    { name: 'title', label: 'Titel', type: 'text', required: true },
-    { name: 'content', label: 'Text', type: 'rich', required: true },
-  ],
   image: [
     { name: 'type', label: 'Type', type: 'select', required: true, options: [
-      { label: 'Text', value: 'text' },
       { label: 'Image', value: 'image' },
       { label: 'Rich', value: 'rich' },
     ]},
@@ -20,7 +10,6 @@ export const blockFieldConfigs = {
   ],
   rich: [
     { name: 'type', label: 'Type', type: 'select', required: true, options: [
-      { label: 'Text', value: 'text' },
       { label: 'Image', value: 'image' },
       { label: 'Rich', value: 'rich' },
     ]},

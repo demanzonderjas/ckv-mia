@@ -56,6 +56,12 @@ async function deleteNews(id: number) {
 		deletingId = null;
 	}
 }
+
+function formatDutchDate(dateStr: string) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+}
 </script>
 
 <h1>CMS: News</h1>
@@ -74,7 +80,7 @@ async function deleteNews(id: number) {
 					<div class="news-info">
 						<strong>{article.title}</strong>
 						{#if article.published_at}
-							<span class="published">{new Date(article.published_at).toLocaleDateString()}</span>
+							<span class="published-date">{formatDutchDate(article.published_at)}</span>
 						{/if}
 					</div>
 					<div class="news-actions">
@@ -185,5 +191,16 @@ async function deleteNews(id: number) {
 .error {
 	color: red;
 	margin-left: 1rem;
+}
+.published-date {
+  background: #eaf6ff;
+  color: #1976d2;
+  padding: 0.15rem 0.7rem;
+  border-radius: 0.5rem;
+  font-size: 0.98em;
+  margin-left: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  display: inline-block;
 }
 </style> 

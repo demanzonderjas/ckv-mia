@@ -18,6 +18,9 @@ return new class extends Migration
             $table->integer('order')->default(0);
             $table->boolean('active')->default(true);
             $table->string('description')->nullable();
+            $table->string('category')->default('side');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('side_menu_links')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@
 
 <style>
   .cms-layout { display: flex; min-height: 100vh; }
-  .cms-menu { width: 220px; background: #f7f7fa; padding: 2rem 1rem; }
+  .cms-menu { width: 250px; min-width: 250px; background: #f7f7fa; padding: 2rem 1rem; }
   .cms-menu a { display: block; margin-bottom: 1rem; color: #333; font-weight: 500; text-decoration: none; }
   .cms-menu a:hover { color: var(--primary-orange); }
   main { flex: 1; padding: 2rem; }

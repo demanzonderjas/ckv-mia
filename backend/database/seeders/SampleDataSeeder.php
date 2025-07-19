@@ -126,6 +126,21 @@ class SampleDataSeeder extends Seeder
             'location' => 'CKV MIA Clubhouse',
             'team_id' => $teamB->id,
         ]);
+        $team = Team::first();
+        Event::create([
+            'name' => 'Event with Team',
+            'description' => 'This event is linked to a team.',
+            'date' => now()->addDays(5),
+            'location' => 'Sporthal',
+            'team_id' => $team ? $team->id : null,
+        ]);
+        Event::create([
+            'name' => 'Event for All Teams',
+            'description' => 'This event is for all teams.',
+            'date' => now()->addDays(10),
+            'location' => 'Clubhuis',
+            'team_id' => null,
+        ]);
 
         // Create Members
         $teams = \App\Models\Team::all();

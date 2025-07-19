@@ -6,6 +6,7 @@
 	import { browser } from '$app/environment';
 	import FormBuilder from '$lib/FormBuilder.svelte';
 	import { blockFieldConfigs, parseBlockContent } from '$lib/fieldConfigs';
+	import ContentBlocksEditor from '$lib/ContentBlocksEditor.svelte';
 
 	let pageId = Number($page.params.id);
 	let editingPage = $state<any>(null);
@@ -14,6 +15,24 @@
 	let error = $state<{ main?: string; add?: string; edit?: string; remove?: string; reorder?: string }>({});
 	let blockIdInProgress = $state<number | null>(null); // for remove/edit loading
 	let editingBlock: any = $state(null); // block being edited
+	let saveError = $state('');
+	let saveSuccess = $state('');
+
+	const fieldsConfig = [
+		{ name: 'title', label: 'Title', type: 'text', required: true },
+		{ name: 'slug', label: 'Slug', type: 'text', required: true },
+		{ name: 'description', label: 'Description', type: 'text', required: false },
+		{ name: 'content_blocks', label: 'Content Blocks', type: 'content-blocks', pageId, blocks: contentBlocks },
+	];
+
+	function toFields(page: any) {
+		return fieldsConfig.map(f => {
+			if (f.type === 'content-blocks') {
+				return { ...f, pageId, blocks: contentBlocks };
+			}
+			return { ...f, value: page?.[f.name] ?? '' };
+		});
+	}
 
 	// Utility to extract field values from a block
 	function blockToFields(block: any = {}, isEdit = false): any[] {
@@ -138,6 +157,31 @@
 		}
 	}
 
+	async function savePage(values: any) {
+		saveError = '';
+		saveSuccess = '';
+		try {
+			const res = await fetch(`http://localhost:8000/api/pages/${pageId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+				body: JSON.stringify(values)
+			});
+			if (!res.ok) {
+				let msg = `Failed to update page (status ${res.status})`;
+				try {
+					const data = await res.json();
+					if (data?.message) msg = data.message;
+				} catch {}
+				throw new Error(msg);
+			}
+			saveSuccess = 'Page updated!';
+			setTimeout(() => goto('/cms/pages'), 800);
+			// await fetchPageAndBlocks();
+		} catch (e: any) {
+			saveError = (e as any).message;
+		}
+	}
+
 	async function saveBlockOrder(newBlocks: any[]) {
 		error.reorder = '';
 		try {
@@ -176,57 +220,21 @@
 	}
 </script>
 
-<h1>Edit Content Blocks</h1>
+<h1>Edit Page</h1>
 <button on:click={goBack}>Back to CMS</button>
 
 {#if status === 'loading'}
-	<p>Loading blocks...</p>
+	<p>Loading...</p>
 {:else if status === 'error'}
 	<p class="error">{error.main}</p>
 {:else if status === 'ready'}
-	<h2>{editingPage.title}</h2>
-	<ul
-		use:dndzone={{ items: contentBlocks, flipDurationMs: 150 }}
-		on:consider={handleDndConsider}
-		on:finalize={handleDndFinalize}
-	>
-		{#each contentBlocks as block, i (block.id)}
-			<li class="dnd-block">
-				<span class="drag-handle" title="Drag to reorder">☰</span>
-				<strong>{block.title || '(no title)'}</strong>
-				<span class="block-type">[{block.type}]</span>
-				<button class="edit-btn" on:click={() => startEditBlock(block)}>Edit</button>
-				<button
-					class="remove-btn"
-					on:click={() => removeBlock(block.id)}
-					disabled={blockIdInProgress === block.id}
-				>
-					{blockIdInProgress === block.id ? 'Removing...' : 'Remove'}
-				</button>
-			</li>
-		{/each}
-	</ul>
-	{#if error.remove}<span class="error">{error.remove}</span>{/if}
-	{#if error.reorder}<span class="error">{error.reorder}</span>{/if}
-	{#if error.add}<span class="error">{error.add}</span>{/if}
-	{#if error.edit}<span class="error">{error.edit}</span>{/if}
-	<button class="add-btn" on:click={() => (status = 'adding')}>Add Block</button>
-{:else if status === 'adding'}
 	<FormBuilder
-		fields={blockToFields()}
-		on:submit={(e: any) => addBlock(e.detail)}
-		onSubmit={undefined}
-		submitLabel="Add"
+		fields={toFields(editingPage)}
+		on:submit={(e: any) => savePage(e.detail)}
+		submitLabel="Save Page"
 	/>
-	<button on:click={() => (status = 'ready')}>Cancel</button>
-{:else if status === 'editing'}
-	<FormBuilder
-		fields={blockToFields(editingBlock, true)}
-		on:submit={(e: any) => saveEditBlock(editingBlock.id, e.detail)}
-		onSubmit={undefined}
-		submitLabel="Save"
-	/>
-	<button on:click={stopEditBlock}>Cancel</button>
+	{#if saveError}<span class="error">{saveError}</span>{/if}
+	{#if saveSuccess}<span class="success">{saveSuccess}</span>{/if}
 {/if}
 
 <style>
@@ -260,6 +268,10 @@
 	}
 	.error {
 		color: red;
+		margin-left: 1rem;
+	}
+	.success {
+		color: green;
 		margin-left: 1rem;
 	}
 	.dnd-block {

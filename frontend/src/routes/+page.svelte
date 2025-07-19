@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Calendar from '$lib/Calendar.svelte';
+	import EditFab from '$lib/EditFab.svelte';
 	let news = $state([]);
 	let loading = $state(true);
 	let error = $state('');
@@ -22,6 +23,7 @@
 		}
 	});
 </script>
+<EditFab href="/cms/pages" title="Beheer pagina's" />
 
 <section class="hero">
 	<div class="hero-content">

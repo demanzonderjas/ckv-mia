@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->dateTime('date');
             $table->string('location');
-            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade');
+            $table->foreignId('team_id')->nullable()->constrained('teams')->onDelete('cascade');
             $table->timestamps();
         });
     }

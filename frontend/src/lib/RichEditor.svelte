@@ -47,7 +47,7 @@ $effect(() => {
 
 <style>
 .ql-container {
-  min-height: 180px;
+  min-height: 300px;
   background: #fff;
   border-radius: 0.7rem;
   box-shadow: 0 2px 8px #0001;
@@ -62,8 +62,8 @@ $effect(() => {
   box-shadow: 0 1px 4px #0001;
   margin-bottom: 0.2rem;
 }
-.ql-editor {
-  min-height: 120px;
+:global(.ql-editor) {
+  min-height: 180px !important;
   padding: 0.7rem;
   background: #fcfcff;
   border-radius: 0.5rem;

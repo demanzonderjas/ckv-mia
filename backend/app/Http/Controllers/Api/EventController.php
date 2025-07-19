@@ -30,7 +30,7 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
-            'team_id' => 'required|exists:teams,id',
+            'team_id' => 'nullable|exists:teams,id',
         ]);
         return Event::create($validated);
     }
@@ -40,7 +40,7 @@ class EventController extends Controller
      */
     public function show(string $id)
     {
-        return Event::findOrFail($id);
+        return Event::with(['image', 'team'])->findOrFail($id);
     }
 
     /**
@@ -54,7 +54,7 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'date' => 'sometimes|required|date',
             'location' => 'sometimes|required|string|max:255',
-            'team_id' => 'sometimes|required|exists:teams,id',
+            'team_id' => 'nullable|exists:teams,id',
         ]);
         $event->update($validated);
         return $event;

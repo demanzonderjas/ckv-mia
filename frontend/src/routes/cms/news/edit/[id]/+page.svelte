@@ -10,15 +10,13 @@ let error = $state('');
 let saveError = $state('');
 let saveSuccess = $state('');
 let newsItem = $state<any>(null);
-let imageUrl = $state('');
-let imageUploading = $state(false);
-let imageUploadError = $state('');
 
 const fieldsConfig = [
   { name: 'title', label: 'Title', type: 'text', required: true },
+  { name: 'summary', label: 'Samenvatting', type: 'text', required: false, placeholder: 'Korte samenvatting voor in het overzicht' },
   { name: 'content', label: 'Content', type: 'textarea', required: true, rows: 6 },
-  // image_url handled separately
   { name: 'published_at', label: 'Published At', type: 'date', required: false },
+  { name: 'image_url', label: 'Afbeelding', type: 'image-upload', entity_type: 'App\\Models\\News', entity_id: id },
 ];
 
 onMount(fetchNewsItem);
@@ -30,7 +28,6 @@ async function fetchNewsItem() {
     const res = await fetch(`http://localhost:8000/api/news/${id}`);
     if (!res.ok) throw new Error('Failed to fetch news item');
     newsItem = await res.json();
-    imageUrl = newsItem.image_url ? (newsItem.image_url.startsWith('http') ? newsItem.image_url : 'http://localhost:8000' + newsItem.image_url) : '';
   } catch (e: any) {
     error = (e as any).message;
   } finally {
@@ -44,6 +41,10 @@ function toFields(news: any) {
     if (f.type === 'date' && value) {
       value = value.slice(0, 10);
     }
+    if (f.type === 'image-upload') {
+      value = news?.image_url ? (news.image_url.startsWith('http') ? news.image_url : 'http://localhost:8000' + news.image_url) : '';
+      return { ...f, value, entity_type: 'App\\Models\\News', entity_id: news?.id ?? id };
+    }
     return { ...f, value };
   });
 }
@@ -51,7 +52,6 @@ function toFields(news: any) {
 async function saveNews(values: any) {
   saveError = '';
   saveSuccess = '';
-  values.image_url = imageUrl;
   try {
     const res = await fetch(`http://localhost:8000/api/news/${id}`, {
       method: 'PUT',
@@ -76,28 +76,6 @@ async function saveNews(values: any) {
   }
 }
 
-async function handleImageUpload(e: Event) {
-  imageUploadError = '';
-  imageUploading = true;
-  const file = (e.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-  const formData = new FormData();
-  formData.append('image', file);
-  try {
-    const res = await fetch('http://localhost:8000/api/news-image', {
-      method: 'POST',
-      body: formData,
-    });
-    if (!res.ok) throw new Error('Failed to upload image');
-    const data = await res.json();
-    imageUrl = 'http://localhost:8000' + data.path;
-  } catch (err: any) {
-    imageUploadError = (err as any).message;
-  } finally {
-    imageUploading = false;
-  }
-}
-
 function goBack() {
   goto('/cms/news');
 }
@@ -109,16 +87,6 @@ function goBack() {
 {:else if error}
   <p class="error">{error}</p>
 {:else}
-  <div class="image-upload-row">
-    <label>Image Upload<br />
-      <input type="file" accept="image/*" on:change={handleImageUpload} />
-    </label>
-    {#if imageUploading}<span>Uploading...</span>{/if}
-    {#if imageUrl}
-      <img src={imageUrl} alt="Preview" class="image-preview" />
-    {/if}
-    {#if imageUploadError}<span class="error">{imageUploadError}</span>{/if}
-  </div>
   <FormBuilder
     fields={toFields(newsItem)}
     on:submit={(e: any) => saveNews(e.detail)}
@@ -130,18 +98,6 @@ function goBack() {
 {/if}
 
 <style>
-.image-upload-row {
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-.image-preview {
-  max-width: 320px;
-  max-height: 180px;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 4px #0002;
-}
 .back-btn {
   margin-top: 1.5rem;
   background: #eee;

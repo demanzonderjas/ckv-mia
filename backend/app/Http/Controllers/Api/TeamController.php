@@ -24,6 +24,8 @@ class TeamController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'category' => 'required|string|in:wedstrijdkorfbal,breedtekorfbal,midweek',
+            'type' => 'required|string|in:senior,junior',
         ]);
         return Team::create($validated);
     }
@@ -45,6 +47,8 @@ class TeamController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'category' => 'sometimes|required|string|in:wedstrijdkorfbal,breedtekorfbal,midweek',
+            'type' => 'sometimes|required|string|in:senior,junior',
         ]);
         $team->update($validated);
         return $team;

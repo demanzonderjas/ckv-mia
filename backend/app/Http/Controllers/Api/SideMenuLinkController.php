@@ -27,6 +27,8 @@ class SideMenuLinkController extends Controller
             'order' => 'integer',
             'active' => 'boolean',
             'description' => 'nullable|string',
+            'category' => 'required|string|in:header,side,footer',
+            'parent_id' => 'nullable|exists:side_menu_links,id',
         ]);
         return SideMenuLink::create($validated);
     }
@@ -51,6 +53,8 @@ class SideMenuLinkController extends Controller
             'order' => 'integer',
             'active' => 'boolean',
             'description' => 'nullable|string',
+            'category' => 'sometimes|required|string|in:header,side,footer',
+            'parent_id' => 'nullable|exists:side_menu_links,id',
         ]);
         $link->update($validated);
         return $link;

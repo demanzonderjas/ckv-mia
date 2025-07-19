@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SideMenuLinkController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\ContentBlockController;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Api\UploadController;
 
 Route::apiResource('teams', TeamController::class);
 Route::apiResource('events', EventController::class);
@@ -18,4 +19,6 @@ Route::apiResource('side-menu-links', SideMenuLinkController::class);
 Route::apiResource('pages', PageController::class);
 Route::apiResource('content-blocks', ContentBlockController::class)->only(['store', 'update', 'destroy']);
 Route::get('pages/slug/{slug}', [PageController::class, 'showBySlug']);
-Route::post('news-image', [App\Http\Controllers\Api\NewsController::class, 'uploadImage']);
+Route::post('upload-image', [UploadController::class, 'uploadImage']);
+Route::post('delete-image', [UploadController::class, 'deleteImage']);
+Route::get('cms/members', [\App\Http\Controllers\Api\MemberController::class, 'cmsList']);

@@ -4,6 +4,8 @@
 	import { Calendar } from '@fullcalendar/core';
 	import dayGridPlugin from '@fullcalendar/daygrid';
 	import interactionPlugin from '@fullcalendar/interaction';
+	import EditFab from '$lib/EditFab.svelte';
+	import { page } from '$app/state';
 
 	interface Event {
 		id: number;
@@ -19,6 +21,7 @@
 	let events = $state<Event[]>([]);
 	let loading = $state(true);
 	let error = $state('');
+	let pageTitle = $state('');
 
 	function getCalendarEvents() {
 		return events.map((e) => ({
@@ -87,6 +90,13 @@
 			});
 			calendarInstance.render();
 		}
+		try {
+			const res = await fetch(`http://localhost:8000/api/pages/slug/events`);
+			if (res.ok) {
+				const data = await res.json();
+				pageTitle = data.title;
+			}
+		} catch {}
 	});
 
 	onDestroy(() => {
@@ -97,6 +107,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{pageTitle ? `${pageTitle} | CKV MIA` : 'CKV MIA'}</title>
+</svelte:head>
+<EditFab href="/cms/events" title="Beheer evenementen" />
 <h1>Upcoming Events</h1>
 <div class="calendar-wrapper">
 	{#if loading}
