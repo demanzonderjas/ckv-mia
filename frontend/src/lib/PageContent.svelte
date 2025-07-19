@@ -1,12 +1,15 @@
 <script lang="ts">
 	import SideMenu from '$lib/SideMenu.svelte';
+	import { page } from '$app/stores';
 </script>
 
 <div class="content-row">
 	<main>
 		<div class="card"><slot /></div>
 	</main>
-	<div class="card side-menu-card"><SideMenu /></div>
+	{#if !$page.url.pathname.startsWith('/cms')}
+		<div class="card side-menu-card"><SideMenu /></div>
+	{/if}
 </div>
 
 <style>
