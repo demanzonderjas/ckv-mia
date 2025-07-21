@@ -199,8 +199,11 @@
 	}
 	.navbar ul li.has-dropdown > a:after {
 		content: ' ▼';
-		font-size: 0.8em;
+		font-size: 0.5em;
 		color: #fff;
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: 0.5em;
 	}
 	.navbar ul li .dropdown {
 		display: none;
