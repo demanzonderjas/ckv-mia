@@ -5,6 +5,7 @@
 	import dayGridPlugin from '@fullcalendar/daygrid';
 	import interactionPlugin from '@fullcalendar/interaction';
 	import EditFab from '$lib/EditFab.svelte';
+	import UpcomingEvents from '$lib/UpcomingEvents.svelte';
 	import { page } from '$app/state';
 
 	interface Event {
@@ -76,6 +77,9 @@
 				contentHeight: 'auto',
 				aspectRatio: 1.5,
 				locale: 'nl',
+				buttonText: {
+					today: 'Vandaag'
+				},
 				eventClick: function (info) {
 					info.jsEvent.preventDefault();
 					if (info.event.url) {
@@ -112,6 +116,7 @@
 </svelte:head>
 <EditFab href="/cms/events" title="Beheer evenementen" />
 <h1>Upcoming Events</h1>
+<UpcomingEvents />
 <div class="calendar-wrapper">
 	{#if loading}
 		<div class="loading-overlay">
@@ -125,6 +130,10 @@
 </div>
 
 <style>
+	h1 {
+		font-size: 30px;
+		margin: 1em 0;
+	}
 	.calendar-wrapper {
 		position: relative;
 	}

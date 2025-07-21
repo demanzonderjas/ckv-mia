@@ -25,6 +25,20 @@ onMount(async () => {
       },
       formats: ['bold', 'italic', 'underline', 'list', 'link']
     });
+    // Add custom HTML button to toolbar
+    const toolbar = quill.getModule('toolbar');
+    const button = document.createElement('button');
+    button.innerHTML = '&lt;/&gt;';
+    button.type = 'button';
+    button.className = 'ql-insertHTML';
+    toolbar.container.appendChild(button);
+    button.addEventListener('click', () => {
+      const html = prompt('Voer HTML in:');
+      if (html) {
+        const range = quill.getSelection(true);
+        quill.clipboard.dangerouslyPasteHTML(range.index, html);
+      }
+    });
     console.log(value);
     quill.root.innerHTML = value || '<p><br></p>';
     quill.on('text-change', () => {
@@ -67,5 +81,19 @@ $effect(() => {
   padding: 0.7rem;
   background: #fcfcff;
   border-radius: 0.5rem;
+}
+.ql-insertHTML {
+  font-size: 1.1em;
+  padding: 0 0.7em;
+  background: #f7f7fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.3em;
+  margin-left: 0.5em;
+  cursor: pointer;
+  color: #444;
+  transition: background 0.15s;
+}
+.ql-insertHTML:hover {
+  background: #eee;
 }
 </style> 

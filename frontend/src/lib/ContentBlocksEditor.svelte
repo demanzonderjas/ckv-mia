@@ -14,7 +14,7 @@ let editingBlock: any = $state(null);
 const dispatch = createEventDispatcher();
 
 function blockToFields(block: any = {}, isEdit = false): any[] {
-  const type: string = block.type || 'text';
+  const type: string = block.type || 'rich';
   const config: any[] = (blockFieldConfigs as any)[type] || blockFieldConfigs.text;
   const title: string = block.title || '';
   const content: string = parseBlockContent(type, block.content);
@@ -29,6 +29,7 @@ function blockToFields(block: any = {}, isEdit = false): any[] {
 async function addBlock(values: any) {
   error.add = '';
   status = 'adding';
+  console.log("add block??", values)
   try {
     const payload = {
       page_id: pageId,

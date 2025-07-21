@@ -111,7 +111,7 @@ async function saveOrder(catLinks: MenuLink[]) {
               <th style="width:2.5rem"></th>
               <th>Title</th>
               <th>URL</th>
-              <th>Parent</th>
+              <th>Hierarchie</th>
               <th>Active</th>
               <th>Description</th>
               <th></th>
@@ -127,7 +127,7 @@ async function saveOrder(catLinks: MenuLink[]) {
                 <td>{link.title}</td>
                 <td>{link.url}</td>
                 <td>{getParentTitle(link)}</td>
-                <td>{link.active ? 'Yes' : 'No'}</td>
+                <td>{link.active ? 'Ja' : 'Nee'}</td>
                 <td>{link.description}</td>
                 <td><button class="edit-btn" on:click={() => startEdit(link)}>Edit</button></td>
               </tr>
