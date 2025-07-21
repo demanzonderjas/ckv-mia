@@ -7,9 +7,6 @@
 	<main>
 		<div class="card"><slot /></div>
 	</main>
-	{#if !$page.url.pathname.startsWith('/cms')}
-		<div class="card side-menu-card"><SideMenu /></div>
-	{/if}
 </div>
 
 <style>

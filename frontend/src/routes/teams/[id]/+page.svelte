@@ -119,7 +119,7 @@
 		gap: 1rem 2rem;
 	}
 	.member-list li {
-		background: #fafafa;
+		background: #f0f0f0;
 		border-radius: 0.5rem;
 		padding: 0.5rem 1rem;
 		font-size: 1.05rem;
