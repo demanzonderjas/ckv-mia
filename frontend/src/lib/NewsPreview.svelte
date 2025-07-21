@@ -4,6 +4,7 @@
   type NewsItemType = {
     id: number;
     title: string;
+    summary?: string;
     image_url?: string;
     category?: { name: string };
   };

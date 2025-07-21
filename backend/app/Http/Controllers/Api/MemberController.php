@@ -45,7 +45,7 @@ class MemberController extends Controller
      */
     public function cmsList(Request $request)
     {
-        $query = Member::query();
+        $query = Member::with('team');
         if ($request->has('team_id')) {
             $query->where('team_id', $request->query('team_id'));
         }

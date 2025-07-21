@@ -40,21 +40,15 @@
 		width: 100%;
 		min-width: 320px;
 	}
-	.side-menu-card {
-		max-width: 300px;
-		min-width: 180px;
-		width: 100%;
-		padding: 1.5rem 1rem;
-	}
+
 	@media (max-width: 900px) {
+		main {
+			width: 100%;
+		}
 		.content-row {
 			flex-direction: column;
 			gap: 0;
 			padding: 0;
-		}
-		.side-menu-card {
-			max-width: 100%;
-			margin: 1rem auto;
 		}
 	}
 </style>

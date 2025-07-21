@@ -13,6 +13,9 @@
       <span class="category-tag"><span class="tag-icon">🏷️</span> {news.category.name.toUpperCase()}</span>
     {/if}
     <h4>{news.title}</h4>
+    {#if news.summary}
+      <p class="news-summary">{news.summary}</p>
+    {/if}
     <span class="read-more">Read more &rarr;</span>
   </div>
 </a>
@@ -60,6 +63,12 @@
 .tag-icon {
   font-size: 1.1em;
   margin-right: 0.3em;
+}
+.news-summary {
+  color: #444;
+  font-size: 0.98rem;
+  margin: 0.2rem 1rem 0.7rem 1rem;
+  line-height: 1.4;
 }
 @media (max-width: 900px) {
   .news-item { width: 100%; }

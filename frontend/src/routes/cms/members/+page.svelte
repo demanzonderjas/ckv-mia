@@ -10,6 +10,7 @@ interface Member {
   email: string;
   phone: string;
   team_id: number;
+  team?: { name: string };
 }
 
 let members: Member[] = $state([]);
@@ -96,7 +97,7 @@ function goToAddMember() {
           <th>Geslacht</th>
           <th>Email</th>
           <th>Telefoon</th>
-          <th>Team ID</th>
+          <th>Team</th>
           <th></th>
         </tr>
       </thead>
@@ -108,7 +109,7 @@ function goToAddMember() {
             <td>{member.gender === 'male' ? 'Man' : member.gender === 'female' ? 'Vrouw' : member.gender}</td>
             <td>{member.email}</td>
             <td>{member.phone}</td>
-            <td>{member.team_id}</td>
+            <td>{member.team?.name || member.team_id}</td>
             <td><button class="edit-btn" on:click={() => startEdit(member)}>Edit</button></td>
           </tr>
         {/each}
