@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 import { onMount } from 'svelte';
 let { value = $bindable(), label = 'Team', required = false, name = '' } = $props();
-let options = $state([]);
+let options: { value: number, label: string }[] = $state([]);
 let loading = $state(true);
 let error = $state('');
 
@@ -12,8 +12,8 @@ onMount(async () => {
     const res = await fetch('http://localhost:8000/api/teams');
     if (!res.ok) throw new Error('Failed to fetch teams');
     const teams = await res.json();
-    options = teams.map(team => ({ value: team.id, label: team.name }));
-  } catch (e) {
+    options = teams.map((team: any) => ({ value: team.id, label: team.name }));
+  } catch (e: any) {
     error = e.message;
   } finally {
     loading = false;
@@ -48,14 +48,6 @@ select:focus {
   border: 1.5px solid var(--primary-orange, #ff6600);
   outline: none;
   box-shadow: 0 2px 8px #ff660022;
-}
-label {
-  font-weight: 600;
-  font-size: 1.08rem;
-  color: var(--primary-orange, #ff6600);
-  margin-bottom: 0.25rem;
-  letter-spacing: 0.01em;
-  text-shadow: 0 1px 2px #0001;
 }
 .error {
   color: red;

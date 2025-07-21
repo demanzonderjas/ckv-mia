@@ -124,9 +124,6 @@
 			<a href="/upload-verslag">Upload wedstrijdverslag</a>
 		</div>
 		<div class="footer-section">
-			<span>Livestream &amp; samenvattingen op onze website en YouTube</span>
-		</div>
-		<div class="footer-section">
 			{#each footerLinks as link}
 				<a href={(link as any).url}>{(link as any).title}</a><br />
 			{/each}
