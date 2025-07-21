@@ -2,6 +2,7 @@
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import FormBuilder from '$lib/FormBuilder.svelte';
+import NewsCategorySelect from '$lib/NewsCategorySelect.svelte';
 import { page } from '$app/stores';
 
 const id = $page.params.id;
@@ -13,10 +14,11 @@ let newsItem = $state<any>(null);
 
 const fieldsConfig = [
   { name: 'title', label: 'Title', type: 'text', required: true },
+  { name: 'news_category_id', label: 'Categorie', type: 'news-category-select', required: false },
   { name: 'summary', label: 'Samenvatting', type: 'text', required: false, placeholder: 'Korte samenvatting voor in het overzicht' },
   { name: 'content', label: 'Content', type: 'textarea', required: true, rows: 6 },
   { name: 'published_at', label: 'Published At', type: 'date', required: false },
-  { name: 'image_url', label: 'Afbeelding', type: 'image-upload', entity_type: 'App\\Models\\News', entity_id: id },
+  { name: 'image_url', label: 'Afbeelding', type: 'image-upload', entity_type: 'App\\Models\\News', entity_id: id, required: false },
 ];
 
 onMount(fetchNewsItem);
@@ -38,6 +40,9 @@ async function fetchNewsItem() {
 function toFields(news: any) {
   return fieldsConfig.map(f => {
     let value = news?.[f.name] ?? '';
+    if (f.name === 'news_category_id') {
+      value = news?.news_category_id ?? news?.category?.id ?? '';
+    }
     if (f.type === 'date' && value) {
       value = value.slice(0, 10);
     }

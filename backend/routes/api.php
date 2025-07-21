@@ -22,3 +22,4 @@ Route::get('pages/slug/{slug}', [PageController::class, 'showBySlug']);
 Route::post('upload-image', [UploadController::class, 'uploadImage']);
 Route::post('delete-image', [UploadController::class, 'deleteImage']);
 Route::get('cms/members', [\App\Http\Controllers\Api\MemberController::class, 'cmsList']);
+Route::apiResource('news-categories', App\Http\Controllers\Api\NewsCategoryController::class);

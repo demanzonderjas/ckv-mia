@@ -168,27 +168,7 @@ class SampleDataSeeder extends Seeder
             }
         }
 
-        MenuLink::create([
-            'title' => 'Playing Schedule',
-            'url' => '/schedule',
-            'order' => 1,
-            'active' => true,
-            'description' => 'View the full playing schedule.'
-        ]);
-        MenuLink::create([
-            'title' => 'Club Info',
-            'url' => '/about',
-            'order' => 2,
-            'active' => true,
-            'description' => 'Learn more about CKV MIA.'
-        ]);
-        MenuLink::create([
-            'title' => 'Contact',
-            'url' => '/contact',
-            'order' => 3,
-            'active' => true,
-            'description' => 'Contact details and form.'
-        ]);
+        
 
         // Seed example pages and content blocks
         $about = Page::create([
@@ -213,12 +193,6 @@ class SampleDataSeeder extends Seeder
             'order' => 1
         ]);
         ContentBlock::create([
-            'page_id' => $about->id,
-            'type' => 'image',
-            'content' => json_encode(['url' => 'https://www.ckvmia.nl/wp-content/uploads/ckvmia/logo-512.png', 'alt' => 'CKV MIA Logo']),
-            'order' => 2
-        ]);
-        ContentBlock::create([
             'page_id' => $contact->id,
             'type' => 'text',
             'content' => json_encode(['text' => 'Neem contact op via info@ckvmia.nl of bezoek ons op Schothorsterlaan 5, Amersfoort.']),
@@ -240,12 +214,6 @@ class SampleDataSeeder extends Seeder
             'type' => 'text',
             'content' => json_encode(['text' => 'Welkom op de nieuwspagina van CKV MIA! Hier vind je het laatste nieuws, updates en aankondigingen.']),
             'order' => 1
-        ]);
-        ContentBlock::create([
-            'page_id' => $newsPage->id,
-            'type' => 'image',
-            'content' => json_encode(['url' => 'https://www.ckvmia.nl/wp-content/uploads/ckvmia/logo-512.png', 'alt' => 'Nieuws bij CKV MIA']),
-            'order' => 2
         ]);
     }
 }

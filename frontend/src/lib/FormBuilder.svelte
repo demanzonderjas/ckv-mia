@@ -12,6 +12,7 @@ import TeamSelect from './TeamSelect.svelte';
 import ContentBlocksEditor from './ContentBlocksEditor.svelte';
 import BooleanSwitch from './BooleanSwitch.svelte';
 import ParentLinkSelect from './ParentLinkSelect.svelte';
+import NewsCategorySelect from './NewsCategorySelect.svelte';
 
 const { fields = [], onSubmit = undefined, submitLabel = 'Opslaan' } = $props();
 
@@ -129,6 +130,12 @@ function submitForm(e: Event) {
           name={field.name}
           category={values['category'] || 'side'}
           excludeId={field.excludeId}
+        />
+      {:else if field.type === 'news-category-select'}
+        <NewsCategorySelect
+          bind:value={values[field.name]}
+          label={field.label}
+          required={field.required}
         />
       {/if}
       {#if errors[field.name]}

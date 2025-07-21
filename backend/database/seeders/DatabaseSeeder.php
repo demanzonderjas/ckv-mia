@@ -15,5 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UserSeeder::class); // Disabled to avoid duplicate email error
         $this->call(SampleDataSeeder::class);
+        $this->call(MenuLinkSeeder::class);
+        $this->call(NewsSeeder::class);
+        $this->call(NewsCategorySeeder::class);
     }
 }

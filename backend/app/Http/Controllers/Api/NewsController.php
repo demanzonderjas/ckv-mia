@@ -17,7 +17,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        return News::orderByDesc('published_at')->get();
+        return News::with('category')->orderByDesc('published_at')->get();
     }
 
     /**
@@ -25,13 +25,15 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'title' => 'required|string|max:255',
             'summary' => 'nullable|string|max:255',
             'content' => 'required|string',
             'image_url' => 'nullable|url',
             'published_at' => 'nullable|date',
-        ]);
+            'news_category_id' => 'nullable|exists:news_categories,id',
+        ];
+        $validated = $request->validate($rules);
         return News::create($validated);
     }
 
@@ -40,7 +42,7 @@ class NewsController extends Controller
      */
     public function show(string $id)
     {
-        return News::findOrFail($id);
+        return News::with('category')->findOrFail($id);
     }
 
     /**
@@ -49,13 +51,15 @@ class NewsController extends Controller
     public function update(Request $request, string $id)
     {
         $news = News::findOrFail($id);
-        $validated = $request->validate([
+        $rules = [
             'title' => 'sometimes|required|string|max:255',
             'summary' => 'nullable|string|max:255',
             'content' => 'sometimes|required|string',
             'image_url' => 'nullable|url',
             'published_at' => 'nullable|date',
-        ]);
+            'news_category_id' => 'nullable|exists:news_categories,id',
+        ];
+        $validated = $request->validate($rules);
         $news->update($validated);
         return $news;
     }

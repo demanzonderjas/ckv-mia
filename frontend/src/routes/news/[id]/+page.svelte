@@ -1,8 +1,16 @@
-<script>
+<script lang="ts">
 import { onMount } from 'svelte';
 import { page } from '$app/state';
 import EditFab from '$lib/EditFab.svelte';
-let news = $state(null);
+interface News {
+  id: number;
+  title: string;
+  image_url?: string;
+  content: string;
+  published_at?: string;
+  category?: { name: string };
+}
+let news = $state<News|null>(null);
 let loading = $state(true);
 let error = $state('');
 
@@ -12,7 +20,7 @@ onMount(async () => {
     const res = await fetch(`http://localhost:8000/api/news/${id}`);
     if (!res.ok) throw new Error('Nieuwsbericht niet gevonden');
     news = await res.json();
-  } catch (e) {
+  } catch (e: any) {
     error = e.message;
   } finally {
     loading = false;
@@ -34,10 +42,16 @@ onMount(async () => {
     {#if news.image_url}
       <div class="news-header-image" style={`background-image: url('${news.image_url}')`}>
         <div class="news-header-overlay">
+          {#if news.category?.name}
+            <span class="category-tag"><span class="tag-icon">🏷️</span> {news.category.name.toUpperCase()}</span>
+          {/if}
           <h1 class="news-title">{news.title}</h1>
         </div>
       </div>
     {:else}
+      {#if news.category?.name}
+        <span class="category-tag"><span class="tag-icon">🏷️</span> {news.category.name.toUpperCase()}</span>
+      {/if}
       <h1 class="news-title">{news.title}</h1>
     {/if}
     <div class="news-content-card">
@@ -110,6 +124,25 @@ onMount(async () => {
 .error {
   color: red;
   font-weight: bold;
+}
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  background: var(--primary, #ff6600);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.25rem 1rem 0.25rem 0.7rem;
+  margin: 1.2rem 1rem 0 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px #0002;
+  gap: 0.5em;
+}
+.tag-icon {
+  font-size: 1.1em;
+  margin-right: 0.3em;
 }
 @media (min-width: 900px) {
   .news-detail {

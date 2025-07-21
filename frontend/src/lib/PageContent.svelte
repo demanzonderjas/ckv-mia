@@ -15,7 +15,7 @@
 		align-items: flex-start;
 		justify-content: space-between;
 		gap: 2rem;
-		max-width: 1400px;
+		/* max-width: 1400px; */
 		width: 100%;
 		margin: 2.5rem auto 0 auto;
 		padding: 0 1rem;
@@ -35,7 +35,7 @@
 	.card {
 		background: var(--primary-white);
 		border-radius: 1rem;
-		box-shadow: 0 2px 12px #0001;
+		/* box-shadow: 0 2px 12px #0001; */
 		padding: 1.5rem 1rem;
 		width: 100%;
 		min-width: 320px;

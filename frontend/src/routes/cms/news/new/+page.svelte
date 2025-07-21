@@ -1,13 +1,27 @@
 <script lang="ts">
 import FormBuilder from '$lib/FormBuilder.svelte';
 import { goto } from '$app/navigation';
+import { onMount } from 'svelte';
 
-const fields = [
+type Field = {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  placeholder?: string;
+  rows?: number;
+  entity_type?: string;
+  entity_id?: number | null;
+  options?: { label: string; value: number }[];
+};
+
+const fields: Field[] = [
   { name: 'title', label: 'Title', type: 'text', required: true },
+  { name: 'news_category_id', label: 'Categorie', type: 'news-category-select', required: false },
   { name: 'summary', label: 'Samenvatting', type: 'text', required: false, placeholder: 'Korte samenvatting voor in het overzicht' },
   { name: 'content', label: 'Content', type: 'textarea', required: true, rows: 6 },
   { name: 'published_at', label: 'Published At', type: 'date', required: false },
-  { name: 'image_url', label: 'Afbeelding', type: 'image-upload', entity_type: 'App\\Models\\News', entity_id: null },
+  { name: 'image_url', label: 'Afbeelding', type: 'image-upload', entity_type: 'App\\Models\\News', entity_id: null, required: false },
 ];
 
 let addError = $state('');

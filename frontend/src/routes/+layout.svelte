@@ -244,11 +244,6 @@
 		color: var(--primary-black);
 	}
 	@media (max-width: 900px) {
-		.layout-wrapper {
-			flex-direction: column;
-			gap: 0;
-			padding: 0;
-		}
 		.side-menu {
 			margin: 1rem auto;
 		}
@@ -354,9 +349,6 @@
 		box-sizing: border-box;
 		flex: none;
 	}
-	.navbar ul li.dropdown-open {
-		/* No height/min-height */
-	}
 	.navbar ul li a {
 		color: #fff;
 		width: 100%;
@@ -409,11 +401,5 @@
 		margin-left: 1.2rem;
 		margin-bottom: 0.5rem;
 	}
-}
-.dropdown-arrow {
-	font-size: 0.8em;
-	margin-left: 0.25em;
-	color: #fff;
-	vertical-align: middle;
 }
 </style>

@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import PageBlocks from '$lib/PageBlocks.svelte';
 	import EditFab from '$lib/EditFab.svelte';
+	import NewsItem from '$lib/NewsItem.svelte';
+	import NewsCategorySelect from '$lib/NewsCategorySelect.svelte';
 	import { page } from '$app/state';
 
 	interface ContentBlock {
@@ -28,6 +30,7 @@
 	let news: any[] = $state([]);
 	let loading = $state(true);
 	let error = $state('');
+	let selectedCategory: number|null = $state(null);
 	// Remove pageTitle and its fetching logic
 
 	function parseContent(content: any) {
@@ -39,6 +42,11 @@
 		if (!dateStr) return '';
 		const date = new Date(dateStr);
 		return new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+	}
+
+	function filteredNews() {
+		if (!selectedCategory) return news;
+		return news.filter(n => n.news_category_id === selectedCategory || n.category?.id === selectedCategory);
 	}
 
 	onMount(async () => {
@@ -62,29 +70,18 @@
 <EditFab href="/cms/news" title="Beheer nieuws" />
 <h1>Nieuws</h1>
 <PageBlocks slug="news" />
+<div class="news-filter-row">
+	<label for="category-select">Categorie:</label>
+	<NewsCategorySelect bind:value={selectedCategory} label="Alle categorieën" />
+</div>
 {#if loading}
 	<p>Loading...</p>
 {:else if error}
 	<p class="error">{error}</p>
 {:else}
-	<div class="news-list">
-		{#each news as item}
-			<a class="news-list-item-link" href={`/news/${item.id}`}>
-				<div class="news-list-item">
-					<h2>{item.title}</h2>
-					{#if item.summary}
-						<p class="news-summary">{item.summary}</p>
-					{/if}
-					<p class="date">
-						{#if item.published_at}
-							<span class="published-date">{formatDutchDate(item.published_at)}</span>
-						{/if}
-					</p>
-					{#if item.image_url}
-						<img src={item.image_url} alt={item.title} class="news-img" />
-					{/if}
-				</div>
-			</a>
+	<div class="news-list news-list-grid">
+		{#each filteredNews() as item}
+			<NewsItem news={item} />
 		{/each}
 	</div>
 {/if}
@@ -108,9 +105,12 @@
 	}
 	.news-list {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 		gap: 2rem;
 		margin-top: 2rem;
+	}
+	.news-list-grid {
+		flex-direction: row;
 	}
 	.news-item {
 		display: flex;
@@ -183,5 +183,11 @@
 	.news-list-item-link:hover .news-list-item {
 		background: #fff7f2;
 		box-shadow: 0 4px 16px #ff660033;
+	}
+	.news-filter-row {
+		display: flex;
+		align-items: center;
+		gap: 1.2rem;
+		margin-bottom: 1.5rem;
 	}
 </style>
