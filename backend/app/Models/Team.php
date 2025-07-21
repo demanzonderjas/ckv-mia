@@ -17,4 +17,9 @@ class Team extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    public function image()
+    {
+        return $this->morphOne(\App\Models\Upload::class, 'entity')->where('type', 'image');
+    }
 }

@@ -24,7 +24,8 @@ const fieldsConfig = [
   { name: 'type', label: 'Type', type: 'select', required: true, options: [
     { value: 'senior', label: 'Senior' },
     { value: 'junior', label: 'Junior' }
-  ]}
+  ]},
+  { name: 'image_url', label: 'Teamfoto', type: 'image-upload', entity_type: 'App\\Models\\Team', entity_id: id, required: false },
 ];
 
 onMount(fetchTeam);
@@ -44,7 +45,17 @@ async function fetchTeam() {
 }
 
 function toFields(team: any) {
-  return fieldsConfig.map(f => ({ ...f, value: team?.[f.name] ?? '' }));
+  return fieldsConfig.map(f => {
+    let value = team?.[f.name] ?? '';
+    if (f.name === 'image_url') {
+      let path = team?.image?.path ?? '';
+      if (path && !path.startsWith('http')) {
+        path = 'http://localhost:8000' + path;
+      }
+      value = path;
+    }
+    return { ...f, value };
+  });
 }
 
 async function saveTeam(values: any) {

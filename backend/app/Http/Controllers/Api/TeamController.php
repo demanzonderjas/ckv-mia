@@ -13,7 +13,7 @@ class TeamController extends Controller
      */
     public function index()
     {
-        return Team::all();
+        return Team::with('image')->get();
     }
 
     /**
@@ -35,7 +35,7 @@ class TeamController extends Controller
      */
     public function show(string $id)
     {
-        return Team::findOrFail($id);
+        return Team::with('image')->findOrFail($id);
     }
 
     /**

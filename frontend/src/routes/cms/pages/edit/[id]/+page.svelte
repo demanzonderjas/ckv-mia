@@ -221,7 +221,6 @@
 </script>
 
 <h1>Edit Page</h1>
-<button on:click={goBack}>Back to CMS</button>
 
 {#if status === 'loading'}
 	<p>Loading...</p>

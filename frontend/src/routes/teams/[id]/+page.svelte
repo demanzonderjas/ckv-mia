@@ -9,6 +9,9 @@
 		name: string;
 		description: string;
 		category: string;
+		image?: {
+			path: string;
+		};
 	}
 	interface Member {
 		id: number;
@@ -55,7 +58,11 @@
 		{#if team.description}
 			<p class="desc">{team.description}</p>
 		{/if}
-		<div class="team-picture-placeholder">Teamfoto (placeholder)</div>
+		{#if team.image?.path}
+			<img class="team-picture" src={team.image.path.startsWith('http') ? team.image.path : 'http://localhost:8000' + team.image.path} alt="Teamfoto" />
+		{:else}
+			<div class="team-picture-placeholder">Teamfoto (placeholder)</div>
+		{/if}
 		<h2>Leden</h2>
 		<div class="member-groups">
 			<div class="member-group">
@@ -109,6 +116,16 @@
 		font-size: 1.2rem;
 		border-radius: 0.75rem;
 		margin-bottom: 2rem;
+	}
+	.team-picture {
+		width: 100%;
+		max-width: 400px;
+		height: 180px;
+		object-fit: cover;
+		border-radius: 0.75rem;
+		margin-bottom: 2rem;
+		display: block;
+		background: #eee;
 	}
 	.member-list {
 		list-style: none;

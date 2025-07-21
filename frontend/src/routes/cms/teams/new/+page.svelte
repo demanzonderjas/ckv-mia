@@ -13,7 +13,8 @@ const fields = [
   { name: 'type', label: 'Type', type: 'select', required: true, options: [
     { value: 'senior', label: 'Senior' },
     { value: 'junior', label: 'Junior' }
-  ]}
+  ]},
+  { name: 'image_url', label: 'Teamfoto', type: 'image-upload', entity_type: 'App\\Models\\Team', entity_id: null, required: false },
 ];
 
 let addError = $state('');

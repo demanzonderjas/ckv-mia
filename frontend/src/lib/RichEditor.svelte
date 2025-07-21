@@ -30,6 +30,7 @@ onMount(async () => {
     const button = document.createElement('button');
     button.innerHTML = '&lt;/&gt;';
     button.type = 'button';
+    button.style.float = "none";
     button.className = 'ql-insertHTML';
     toolbar.container.appendChild(button);
     button.addEventListener('click', () => {
@@ -39,7 +40,6 @@ onMount(async () => {
         quill.clipboard.dangerouslyPasteHTML(range.index, html);
       }
     });
-    console.log(value);
     quill.root.innerHTML = value || '<p><br></p>';
     quill.on('text-change', () => {
       lastSetByQuill = true;
